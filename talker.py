@@ -2,8 +2,9 @@ import sys
 import re
 import random
 
-def main(N_GRAM_MODEL, NUM_GEN_SENT, listOfInputFiles):
 
+def getData(listOfInputFiles):
+	
 	data = ""
 
 	for i in range(len(listOfInputFiles)):
@@ -12,6 +13,10 @@ def main(N_GRAM_MODEL, NUM_GEN_SENT, listOfInputFiles):
 			data += file.read()
 	
 	data = data.lower()
+
+	return data
+
+def unigram(NUM_GEN_SENT, data):
 	
 	data = re.sub(r'([.?!,]+)', r' \1', data)
 	
@@ -34,7 +39,7 @@ def main(N_GRAM_MODEL, NUM_GEN_SENT, listOfInputFiles):
 			print(word, end = " ")
 			
 
-	"""
+"""	
 	unigramCount = {}
 	
 	for token in tokens:
@@ -49,11 +54,11 @@ def main(N_GRAM_MODEL, NUM_GEN_SENT, listOfInputFiles):
 	
 	
 	for key, value in sorted(unigramCount.items(), key=lambda x: x[1], reverse=True):
-		print(key, " : ", value)
+		#print(key, " : ", value)
 		count += value
-	"""
-
 	
+	print("Tokens: {}".format(count))
+"""	
 	
 
 if(__name__ == "__main__"):
@@ -65,14 +70,20 @@ if(__name__ == "__main__"):
 		NUM_GEN_SENT = int(sys.argv[2])
 		listOfInputFiles = sys.argv[3:]
 
-		print(N_GRAM_MODEL)
-		print(NUM_GEN_SENT)
-		print(listOfInputFiles)
-		
+		data = getData(listOfInputFiles)
+	
+		if(N_GRAM_MODEL == 1):
+			unigram(NUM_GEN_SENT, data)
+		elif(N_GRAM_MODEL == 2):
+			pass
+		elif(N_GRAM_MODEL == 3):
+			pass
+		else:
+			print("Incorrect arguments: [1, 2, 3,] sentences file1 file2 file...")
+			exit()
 	else:
 		print("Incorrect arguments: ngram sentences file1 file2 file...")
 		exit()
 
 
-	main(N_GRAM_MODEL, NUM_GEN_SENT, listOfInputFiles)
 	
