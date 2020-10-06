@@ -13,9 +13,9 @@ def getData(listOfInputFiles):
 			data += file.read()
 	
 	data = data.lower()
-        
-        data = re.sub(r'([.?!,]+)', r' \1', data)
-	
+
+	data = re.sub(r'([.?!,]+)', r' \1', data)
+
 	data = re.sub(r'([^a-z.?!,])', '\n', data)
 
 	tokens = data.split()
@@ -24,10 +24,10 @@ def getData(listOfInputFiles):
 
 def unigram(NUM_GEN_SENT, tokens):
 	
-    	countSentences = 0
+	countSentences = 0
 
 	while countSentences < NUM_GEN_SENT:
-		
+
 		word = random.choice(tokens)
 
 		match = re.match(r'[.?!]', word)
@@ -60,32 +60,47 @@ def unigram(NUM_GEN_SENT, tokens):
 	print("Tokens: {}".format(count))
 """	
 
-def nGram(N_GRAM_MODEL, tokens):
+def nGram(NUM_GEN_SENT, N_GRAM_MODEL, tokens):
 
-    countSentences = 0
-    
-    newTokens = []
+	newTokens = []
 
-    for i in range(0, len(tokens), N_GRAM_MODEL):
-        newTokens.append(' '.join(tokens[i : i + N_GRAM_MODEL))
+	for i in range(0, len(tokens), N_GRAM_MODEL):
+		newTokens.append(' '.join(tokens[i : i + N_GRAM_MODEL]))
 
-    ngramCount = {}
+	
+	ngramCount = {}
 
-    for token in newTokens:
-        if token not in ngramCount:
-                nngramCount[token] = 1
-        else:
-                ngramCount[token] += 1
+	for token in newTokens:
+		if token not in ngramCount:
+			ngramCount[token] = 1
+		else:
+			ngramCount[token] += 1
 
 
-    count = 0
+	count = 0
+	ncount = 0
+	for key, value in sorted(ngramCount.items(), key = lambda x: x[1], reverse=True):
+		print(key, " : ", value)
+		count += value
+		ncount += 1
+		if ncount == 10:
+			break
 
-    for key, value in sorted(ngramCount.items(), key = lambda x: x[1], reverse=True):
-        print(key, " : ", value)
-        count += value
+	print("Tokens: {}".format(count))
+	
+	countSentences = 0
 
-    print("Tokens: {}".format(count))
+	while countSentences < NUM_GEN_SENT:
 
+		word = random.choice(tokens)
+
+		match = re.match(r'[.?!]', word)
+
+		if match:
+			countSentences += 1
+			print(word)
+		else:
+			print(word, end = " ")
 
 
 
@@ -103,9 +118,9 @@ if(__name__ == "__main__"):
 		if(N_GRAM_MODEL == 1):
 			unigram(NUM_GEN_SENT, data)
 		elif(N_GRAM_MODEL == 2):
-			nGram(N_GRAM_MODEL, data)
+			nGram(NUM_GEN_SENT, N_GRAM_MODEL, data)
 		elif(N_GRAM_MODEL == 3):
-			nGram(N_GRAM_MODEL, data)
+			nGram(NUM_GEN_SENT, N_GRAM_MODEL, data)
 		else:
 			print("Incorrect arguments: [1, 2, 3,] sentences file1 file2 file...")
 			exit()
