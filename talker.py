@@ -12,7 +12,7 @@ def getData(N_GRAM_MODEL, listOfInputFiles):
 
 		with open(listOfInputFiles[i], 'r') as file:
 			data += file.read()
-	
+
 	data = data.lower()
 
 	data = re.sub(r'([.?!,]+)', r' \1', data)
@@ -22,104 +22,98 @@ def getData(N_GRAM_MODEL, listOfInputFiles):
 	tokens = data.split()
 
 	if(N_GRAM_MODEL == 2 or N_GRAM_MODEL == 3):
+
+		if N_GRAM_MODEL == 2:
+			step = N_GRAM_MODEL - 1
+		else:
+			step = N_GRAM_MODEL - 2
+
 		newTokens = []
 
-		for i in range(0, len(tokens), N_GRAM_MODEL):
+		for i in range(0, len(tokens), step):
 			newTokens.append(' '.join(tokens[i : i + N_GRAM_MODEL]))
 	
 		return newTokens # Return for bigram and trigram
 
 	return tokens # Return for unigram
 
-def unigram(NUM_GEN_SENT, tokens):
-	
-	countSentences = 0
-
-	while countSentences < NUM_GEN_SENT:
-
-		word = random.choice(tokens)
-
-		match = re.match(r'[.?!]', word)
-
-		if match:
-			countSentences += 1
-			print(word)
-		else:
-			print(word, end = " ")
-			
-
-
-	unigramCount = {}
-	
-	for token in tokens:
-		if token not in unigramCount:
-			unigramCount[token] = 1
-		else:
-			unigramCount[token] += 1
-
-
-	
-	count = 0
-	
-	
-	for key, value in sorted(unigramCount.items(), key=lambda x: x[1], reverse=True):
-		#print(key, " : ", value)
-		count += value
-	
-	print("Tokens: {}".format(count))
-
-
-def nGram(NUM_GEN_SENT, tokens):
+def getNgramCounts(tokens):
 
 	ngramCount = {}
 
+	for token in tokens:
+		token = token.split()
+		id = ' '.join(token[:-1])
+		next = token[-1]
+
+		if id not in ngramCount:
+			ngramCount[id] = {}
+		
+		if next not in ngramCount[id]:
+			ngramCount[id][next] = 1
+		else:
+			ngramCount[id][next] += 1
+
+	#print(ngramCount)
+
+	return ngramCount
+
+def getNumberOfTokens(tokens):
+	ngramCount = {}
+	
 	for token in tokens:
 		if token not in ngramCount:
 			ngramCount[token] = 1
 		else:
 			ngramCount[token] += 1
 
-
 	count = 0
-	ncount = 0
-	for key, value in sorted(ngramCount.items(), key = lambda x: x[1], reverse=True):
-		print(key, " : ", value)
-		count += value
-		ncount += 1
-		if ncount == 10:
-			break
-
-	print("Tokens: {}".format(count))
 	
+	for key, value in sorted(ngramCount.items(), key=lambda x: x[1], reverse=True):
+		#print(key, " : ", value)
+		count += value
+	
+	#print("Tokens: {}".format(count))
+
+	return count
+
+def ngram(N_GRAM_MODEL, NUM_GEN_SENT, tokens, ngram):
+
 	countSentences = 0
+
+	word = random.choice(list(ngram.keys()))
+	
+	if N_GRAM_MODEL == 3:
+		temp = word 
+	else: 
+		temp = None
 
 	while countSentences < NUM_GEN_SENT:
 
-		word = random.choice(tokens)
+		punctionMatch = re.search(r'[.?!]+', word)
 
-		match = re.match(r'[.?!]', word)
-
-		if match:
+		if punctionMatch:
 			countSentences += 1
 			print(word)
 		else:
 			print(word, end = " ")
+			
+			
+		if N_GRAM_MODEL == 1:
+			word = random.choice(tokens)
 
+		elif N_GRAM_MODEL == 2:
+			word = random.choice(list(ngram[word].keys())) # Next word
 
-def main(NUM_GEN_SENT, tokens):
+		elif N_GRAM_MODEL == 3:
 
-	countSentences = 0
-
-	while countSentences < NUM_GEN_SENT:
-		word = random.choice(tokens)
-
-		match = re.search(r'[.?!]+', word)
-
-		if match:
-			countSentences += 1
-			print(word)
+			word = random.choice(list(ngram[temp].keys()))
+			temp = temp.split()[1] + " " + word
+			
 		else:
-			print(word, end = " ")
+			print("What did you just do...")
+			exit()
+
 
 
 
@@ -135,13 +129,17 @@ if(__name__ == "__main__"):
 		print(INTRO.format(NUM_GEN_SENT, N_GRAM_MODEL))
 
 		data = getData(N_GRAM_MODEL, listOfInputFiles)
-	
+		
+		getNumberOfTokens(data)
+		
+		ngramCount = getNgramCounts(data)
+
 		if(N_GRAM_MODEL == 1):
-			main(NUM_GEN_SENT, data)
+			ngram(N_GRAM_MODEL, NUM_GEN_SENT, data, ngramCount)
 		elif(N_GRAM_MODEL == 2):
-			main(NUM_GEN_SENT, data)
+			ngram(N_GRAM_MODEL, NUM_GEN_SENT, data, ngramCount)
 		elif(N_GRAM_MODEL == 3):
-			main(NUM_GEN_SENT, data)
+			ngram(N_GRAM_MODEL, NUM_GEN_SENT, data, ngramCount)
 		else:
 			print("Incorrect arguments: (1, 2, 3) num_sentences file1 file2 file...")
 			exit()
