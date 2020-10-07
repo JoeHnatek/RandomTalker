@@ -59,10 +59,14 @@ def getData(N_GRAM_MODEL, listOfInputFiles):
 		newTokens = [] # List to handle the new tokens if not unigram
 
 		for i in range(0, len(tokens), step):	# Slide across the data based on the step to gather the ngram model.
-			newTokens.append(' '.join(tokens[i : i + N_GRAM_MODEL]))	# join the bigram or trigram model data to create a new token list
-																		# ex) input -> "The red fox jumped."
-																		# If bigram: ["The red", "red fox", "fox jumped", "jumped ."]
-																		# If trigram: ["The red fox", "red fox jumped", "fox jumped ."]
+
+			# join the bigram or trigram model data to create a new token list
+			# ex) input -> "The red fox jumped."
+			# If bigram: ["The red", "red fox", "fox jumped", "jumped ."]
+			# If trigram: ["The red fox", "red fox jumped", "fox jumped ."]
+
+			newTokens.append(' '.join(tokens[i : i + N_GRAM_MODEL]))
+			
 	
 		return newTokens # Return for bigram and trigram
 
@@ -107,8 +111,8 @@ def getNumberOfTokens(tokens): #
 
 	count = 0
 	
-	for key, value in sorted(ngramCount.items(), key=lambda x: x[1], reverse=True): # Print out the dictionary in sorted order.
-		#print(key, " : ", value)													# Python does not have sorted dictionarys (Hash maps)
+	for key, value in sorted(ngramCount.items(), key=lambda x: x[1], reverse=True): # Print out the dictionary in sorted order. Python does not have sorted dictionarys (Hash maps)
+		#print(key, " : ", value)
 		count += value
 	
 	print("Tokens: {}".format(count))
