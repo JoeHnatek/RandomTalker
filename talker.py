@@ -85,12 +85,12 @@ def getNgramCounts(tokens):
 		next = token[-1]	# Next is the word that is associated with the id for frequency.
 
 		if id not in ngramCount:	# If ID is not in the dictionary, then add it.
-			ngramCount[id] = {}
+			ngramCount[id] = []
 		
-		if next not in ngramCount[id]:	# If the next word has not been associated with the ID, add it
-			ngramCount[id][next] = 1
-		else:
-			ngramCount[id][next] += 1	# If the next word has been associated, add one to the count for frequency count.
+		#if next not in ngramCount[id]:	# If the next word has not been associated with the ID, add it
+		#	ngramCount[id].append(next)
+		#else:
+		ngramCount[id].append(next)	# If the next word has been associated, add one to the count for frequency count.
 
 	#print(ngramCount)
 
@@ -153,8 +153,7 @@ def ngram(N_GRAM_MODEL, NUM_GEN_SENT, tokens, ngram):
 			word = random.choice(list(ngram[word].keys())) # Next word in bigram model
 
 		elif N_GRAM_MODEL == 3:
-
-			word = random.choice(list(ngram[prevWord].keys())) # store the word to output in the sentence.
+			word = random.choice(ngram[prevWord]) # store the word to output in the sentence.
 			prevWord = prevWord.split()[1] + " " + word # store the previous word so we don't duplicate the last word in the output.
 			
 		else:
