@@ -75,7 +75,7 @@ def getData(N_GRAM_MODEL, listOfInputFiles):
 def getNgramCounts(tokens):
 	"""
 		getNgramCounts returns the complete dictionary of frequencies of the ngram model
-		ngram structure = {"the": {"green":1, "red":1, "fox":2}, "red": {"fox":1}}
+		ngram structure = {"the": ["red", "green", "fox", "fox"]}, "red": ["fox"]}
 	"""
 	ngramCount = {}	# Our ngram dictionary (hashmap)
 
@@ -87,37 +87,11 @@ def getNgramCounts(tokens):
 		if id not in ngramCount:	# If ID is not in the dictionary, then add it.
 			ngramCount[id] = []
 		
-		#if next not in ngramCount[id]:	# If the next word has not been associated with the ID, add it
-		#	ngramCount[id].append(next)
-		#else:
 		ngramCount[id].append(next)	# If the next word has been associated, add one to the count for frequency count.
 
 	#print(ngramCount)
 
 	return ngramCount
-
-def getNumberOfTokens(tokens): #
-	"""
-		Debug code to count how many tokens we have
-	"""
-
-	ngramCount = {}
-	
-	for token in tokens:			# For each token, if the token is not in ngramCount, add it and set its value to 1.
-		if token not in ngramCount:	# If the token is in ngramCount, add 1 to the value.
-			ngramCount[token] = 1
-		else:
-			ngramCount[token] += 1
-
-	count = 0
-	
-	for key, value in sorted(ngramCount.items(), key=lambda x: x[1], reverse=True): # Print out the dictionary in sorted order. Python does not have sorted dictionarys (Hash maps)
-		#print(key, " : ", value)
-		count += value
-	
-	print("Tokens: {}".format(count))
-
-	return count
 
 def ngram(N_GRAM_MODEL, NUM_GEN_SENT, tokens, ngram):
 	"""
@@ -150,7 +124,7 @@ def ngram(N_GRAM_MODEL, NUM_GEN_SENT, tokens, ngram):
 			word = random.choice(tokens) # Choose from a random token.
 
 		elif N_GRAM_MODEL == 2:
-			word = random.choice(list(ngram[word].keys())) # Next word in bigram model
+			word = random.choice(ngram[word]) # Next word in bigram model
 
 		elif N_GRAM_MODEL == 3:
 			word = random.choice(ngram[prevWord]) # store the word to output in the sentence.
@@ -159,8 +133,6 @@ def ngram(N_GRAM_MODEL, NUM_GEN_SENT, tokens, ngram):
 		else:
 			print("What did you just do...") # This would be impossible to reach...
 			exit()
-
-
 
 
 if(__name__ == "__main__"):
@@ -175,8 +147,6 @@ if(__name__ == "__main__"):
 		print(INTRO.format(NUM_GEN_SENT, N_GRAM_MODEL), "\n") # Print intro statement.
 
 		data = getData(N_GRAM_MODEL, listOfInputFiles) # Data contains the tokens of the input files.
-		
-		#getNumberOfTokens(data) # Debug code to see how many tokens we have.
 		
 		ngramCount = getNgramCounts(data) # Generate the ngram model count so we can randomly generate sentences.
 
